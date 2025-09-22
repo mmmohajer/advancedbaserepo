@@ -391,7 +391,7 @@ docker volume rm $(docker volume ls -q)
 
 ### 9.7. Test SSL Setup
 
-1. Update the domain in the server_name block of `default-temp-with-ssl.conf`.
+1. **Update the domain in the server_name block of `default-temp-with-ssl.conf`.**
 2. Set permissions:
    ```sh
    sudo chown -R USERNAME:USERNAME /var/www/app
@@ -401,6 +401,8 @@ docker volume rm $(docker volume ls -q)
    ```sh
    sudo docker compose -f docker-compose-temp-with-ssl.yml up --build -d
    ```
+
+**Update the domain in the server_name block of `stream.conf`**
 
 ### 9.8. Production Deployment
 

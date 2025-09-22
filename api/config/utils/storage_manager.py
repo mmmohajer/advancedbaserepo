@@ -52,15 +52,15 @@ class CloudStorageManager:
             print(f"Upload error: {e}")
             return False
 
-    def get_url(self, bucket="images", file_key="nested/test_img.svg", acl="private"):
+    def get_url(self, bucket="images", file_key="nested/test_img.svg", acl="private", expires_in=3600):
         """Get either a signed URL or a public CDN URL based on ACL."""
         try:
             if acl == "private":
-                return self._get_signed_url(bucket, file_key)
+                return self._get_signed_url(bucket, file_key, expires_in)
             elif acl == "public-read" and self.cdn_url:
                 return f"{self.cdn_url}/{file_key}"
             else:
-                return self._get_signed_url(bucket, file_key)
+                return self._get_signed_url(bucket, file_key, expires_in)
         except Exception as e:
             print(f"Get URL error: {e}")
             return ""

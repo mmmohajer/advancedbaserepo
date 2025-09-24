@@ -2,9 +2,9 @@ BOLD_TXT=$(tput bold)
 NORMAL_TXT=$(tput sgr0)
 OPTIONS=(0 1 2 3 4 5 6 7 8 9 10 11 12 Q)
 
-PROD_SERVER_ALIAS=TexVoManager1
+PROD_SERVER_ALIAS=PROD_SERVER_ALIAS
 
-NGINX_REPO="iswad/texvo-nginx"
-CLIENT_REPO="iswad/texvo-client"
-API_REPO="iswad/texvo-api"
-JANUS_REPO="iswad/texvo-janus"
+NGINX_REPO="NGINX_REPO"
+CLIENT_REPO="CLIENT_REPO"
+API_REPO="API_REPO"
+JANUS_REPO="JANUS_REPO"

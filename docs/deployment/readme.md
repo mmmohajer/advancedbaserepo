@@ -357,6 +357,7 @@ Update the following file in your local system:
 ```sh
 sudo chmod +x ./init-letsencrypt.sh
 sudo chmod +x /var/www/app/utils/assistances/backup_db_swarm.sh
+sudo chmod 600 ./secrets/secret_files/cloudflare.ini
 ```
 
 ### 9.4. Setup HTTP Basic Auth for Flower (Optional)

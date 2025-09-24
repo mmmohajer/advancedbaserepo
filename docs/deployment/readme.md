@@ -324,7 +324,7 @@ git clone SSH_REPO_URL .
 ### 9.1. Create Required Folders
 
 ```sh
-mkdir -p ./api/vol/static ./api/vol/media ./db_backups ./volume_data volume_data/django_static/static volume_data/django_static/media
+mkdir -p ./api/vol/static ./api/vol/media ./db_backups ./volume_data volume_data/django_static/static volume_data/django_static/media volume_data/to_be_served volume_data/websocket_tmp
 ```
 
 ### 9.2. Update Configuration Files

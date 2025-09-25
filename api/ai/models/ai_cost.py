@@ -20,7 +20,7 @@ SERVICE_CHOICES = (
 
 class AiCost(TimeStampedModel):
     user = models.ForeignKey(UserModel, blank=True, null=True, on_delete=models.SET_NULL, related_name="ai_costs")
-    cost = models.DecimalField(max_digits=10, decimal_places=2)
+    cost = models.DecimalField(max_digits=16, decimal_places=6)
     service = models.CharField(max_length=255, choices=SERVICE_CHOICES)
 
     def __str__(self):

@@ -5,6 +5,7 @@ import json
 import os
 from google.cloud import texttospeech, speech
 
+from core.models import UserModel
 from ai.utils.open_ai_manager import OpenAIManager
 from ai.utils.google_ai_manager import GoogleAIManager
 from ai.utils.ocr_manager import OCRManager
@@ -183,11 +184,14 @@ def test_summarizer():
     pdf_path = os.path.join("/websocket_tmp/texts/", 'Relativity4.pdf')
     with open(pdf_path, 'rb') as file:
         pdf_bytes = file.read()
+    cur_user = UserModel.objects.filter(email="mmmohajer70@gmail.com").first()
     ocr_manager = OCRManager(
         google_cloud_project_id=settings.GOOGLE_CLOUD_DOCUMENT_AI_PROJECT_ID,
         google_cloud_location=settings.GOOGLE_CLOUD_DOCUMENT_AI_LOCATION,
-        google_cloud_processor_id=settings.GOOGLE_CLOUD_DOCUMENT_AI_PROCESSOR_ID
+        google_cloud_processor_id=settings.GOOGLE_CLOUD_DOCUMENT_AI_PROCESSOR_ID,
+        cur_users=[cur_user] if cur_user else []
     )
+    open_ai_manager = OpenAIManager(model="gpt-4o", api_key=settings.OPEN_AI_SECRET_KEY, cur_users=[cur_user] if cur_user else [])
     pdf_file_path = os.path.join("/websocket_tmp/texts/", 'Relativity4.pdf')
     with open(pdf_file_path, 'rb') as pdf_file:
         pdf_bytes = pdf_file.read()
@@ -197,7 +201,6 @@ def test_summarizer():
         print(f"Processing page {page}...")
         png_bytes = ocr_manager.convert_pdf_page_to_png_bytes(pdf_file_path, page_number=page)
         html_output = ocr_manager.ocr_using_document_ai(base64.b64encode(png_bytes).decode('utf-8'))
-        open_ai_manager = OpenAIManager(model="gpt-4o", api_key=settings.OPEN_AI_SECRET_KEY)
         page_text = open_ai_manager.build_simple_text_from_html(html_output)
         pdf_texts.append(page_text)
     text_to_summarize = "".join(pdf_texts)
@@ -561,4 +564,4 @@ def test_azure_tts():
 
 
 def test_ai_manager():
-   list_voices()
+   test_summarizer()

@@ -1,14 +1,18 @@
 #!/bin/bash
 
-# Get the container ID for the DB container
+# Load DB credentials (adjust path if needed)
+source /var/www/app/secrets/db/.env
+
 DB_CONTAINER_ID=$(docker ps --filter "name=db" -q)
 
-# Check if the DB container ID is not empty
 if [ ! -z "$DB_CONTAINER_ID" ]; then
-    # Backup the database
-    docker exec $DB_CONTAINER_ID pg_dump DB_NAME -U DB_USER > /var/www/app/db_backups/db_backup_$(date +%Y-%m-%d_%H-%M-%S).sql
+    # Export password so pg_dump won’t ask for it
+    export PGPASSWORD=$POSTGRES_PASSWORD
     
-    # Delete old database backups
+    docker exec -e PGPASSWORD=$POSTGRES_PASSWORD $DB_CONTAINER_ID \
+      pg_dump -U $POSTGRES_USER $POSTGRES_DB > /var/www/app/db_backups/db_backup_$(date +%Y-%m-%d_%H-%M-%S).sql
+    
+    # Clean up old backups (15 days retention)
     find /var/www/app/db_backups -type f -mtime +15 -delete
     find /var/www/app/db_backups -type d -empty -delete
 else

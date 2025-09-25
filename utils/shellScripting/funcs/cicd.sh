@@ -47,9 +47,11 @@ update_constants_file() {
     local nginx_ver=$1
     local client_ver=$2
     local api_ver=$3
+    local janus_ver=$4
     cat << EOF > ./utils/shellScripting/constants/versioning.sh
 NGINX_VERSION="$nginx_ver"
 CLIENT_VERSION="$client_ver"
 API_VERSION="$api_ver"
+JANUS_VERSION="$janus_ver"
 EOF
 }

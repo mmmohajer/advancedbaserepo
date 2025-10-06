@@ -11,7 +11,7 @@ const DisplayIcons = () => {
           <Div
             type="flex"
             vAlign="center"
-            className="width-per-100 bg-theme-one p-x-temp-4 m-b-32"
+            className="width-per-100 bg-black p-x-temp-4 m-b-32"
             key={idx}
           >
             <Div className="f-b m-r-32">{item}:</Div>

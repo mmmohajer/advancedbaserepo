@@ -1,24 +1,12 @@
 from celery import shared_task
 
-from core.models import UserModel, ProfileModel
-from ai.models import AiCostModel
+from ai.tasks.cost import apply_cost
+from ai.tasks.memory import build_memorized_chat_messages
 
 @shared_task
 def apply_cost_task(user_ids, cost, service):
-    if cost > 0:
-        if user_ids:
-            for user_id in user_ids:
-                cur_profile = ProfileModel.objects.filter(user_id=user_id).first()
-                cur_profile.credit = cur_profile.credit - (cost / len(user_ids))
-                cur_profile.save()
-                
-                cur_cost = AiCostModel()
-                cur_cost.user_id = user_id
-                cur_cost.cost = cost / len(user_ids)
-                cur_cost.service = service
-                cur_cost.save()
-        else:
-            cur_cost = AiCostModel()
-            cur_cost.cost = cost
-            cur_cost.service = service
-            cur_cost.save()
+    return apply_cost(user_ids, cost, service)
+
+@shared_task
+def build_memorized_chat_messages_task(user_ids, chat_messages, max_chars_per_message, max_total_chars_for_messages, cache_key, cache_timeout=3600):
+    return build_memorized_chat_messages(user_ids, chat_messages, max_chars_per_message, max_total_chars_for_messages, cache_key, cache_timeout)

@@ -14,8 +14,8 @@
 
   &::after {
     content: "";
-    border: solid map.get($brandingColors, "theme-one");
-    border-top-color: map.get($brandingColors, "theme-two");
+    border: solid 1px black;
+    border-top-color: black;
     border-radius: 50%;
     animation: loading 1s ease infinite;
   }

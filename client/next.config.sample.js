@@ -13,12 +13,14 @@ const nextConfig = {
   },
 
   env: {
-    APP_DOMAIN: "makeclient.ngrok.io",
-    GA_TRACKING_ID: "",
-    GOOGLE_AUTH_CLIENT_ID: "",
-    ICE_SERVER_DOMAIN: "IP_ADDRESS_OR_DOMAIN",
+    APP_DOMAIN: "APP_DOMAIN",
+    APP_NAME: "APP_NAME",
+    GA_TRACKING_ID: "GA_TRACKING_ID",
+    GOOGLE_AUTH_CLIENT_ID: "GOOGLE_AUTH_CLIENT_ID",
+    ICE_SERVER_DOMAIN: "ICE_SERVER_DOMAIN",
     TURN_USER_NAME: "TURN_USER_NAME",
     TURN_USER_PASSWORD: "TURN_USER_PASSWORD",
+    STORAGE_BASE_URL: "STORAGE_BASE_URL",
   },
 
   publicRuntimeConfig: {
@@ -28,7 +30,13 @@ const nextConfig = {
   },
 
   images: {
-    domains: ["localhost", "makeclient.ngrok.io", "picsum.photos"],
+    domains: [
+      "localhost",
+      "makeclient.ngrok.io",
+      "picsum.photos",
+      "STORAGE_BASE_URL",
+      "STORAGE_BASE_URL.cdn",
+    ],
   },
 };
 

@@ -9,10 +9,14 @@ export const USER_LOGOUT_API_ROUTE = "/api/user-logout/";
 export const USER_AUTH_WITH_GOOGLE_API_ROUTE = "/api/user-auth-with-google/";
 export const USER_LOGIN_WITH_GOOGLE_API_ROUTE = "/api/user-login-with-google/";
 export const PROFILE_API_ROUTE = "/api/profile/";
+export const BLOGS_API_ROUTE = "/api/blogs/";
+export const RECENT_BLOGS_API_ROUTE = "/api/recent-blogs/";
+export const TIPS_API_ROUTE = "/api/tips/";
+export const RECENT_TIPS_API_ROUTE = "/api/recent-tips/";
+export const PROJECTS_API_ROUTE = "/api/projects/";
+export const SUBSCRIBERS_API_ROUTE = "/api/subscribers/";
+export const TESTIMONIALS_API_ROUTE = "/api/testimonials/";
 
 // WEBSOCKET API ROUTES
 export const WEBSOCKET_TEST_API_ROUTE = `/wss/test-socket/`;
-export const CHAT_BOT_API_ROUTE = `/wss/chat-bot/`;
-export const TEACHER_API_ROUTE = `/wss/teacher/`;
-export const TRANSLATOR_API_ROUTE = `/wss/translator/`;
-export const NARRATOR_API_ROUTE = `/wss/narrator/`;
+export const WEBSOCKET_BLOG_ASSISTANT_API_ROUTE = `/wss/blog-assistant/`;

@@ -14,7 +14,7 @@ const Type1 = ({ label, val, setVal, isRequired = false }) => {
           hAlign="center"
           vAlign="center"
           onClick={() => setVal(!val)}
-          className="width-px-30 height-px-30 bg-white br-all-solid-2 br-rad-px-5 br-theme-five mouse-hand"
+          className="width-px-30 height-px-30 bg-white br-all-solid-2 br-rad-px-5 br-black mouse-hand"
         >
           {val ? (
             <Div
@@ -23,7 +23,7 @@ const Type1 = ({ label, val, setVal, isRequired = false }) => {
               vAlign="center"
               className="width-px-20 height-px-20"
             >
-              <Icon type="check-mark" scale={1.5} color={COLORS["theme-two"]} />
+              <Icon type="check-mark" scale={1.5} color={"black"} />
             </Div>
           ) : (
             ""

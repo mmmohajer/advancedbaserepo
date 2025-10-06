@@ -15,7 +15,7 @@ const DesktopView = ({ children }) => {
           className={cx("width-per-50", styles.imgContainer)}
         >
           <Div
-            className="text-center text-theme-one f-s-px-32 max-width-px-250 f-b f-i text-upper-case"
+            className="text-center text-black f-s-px-32 max-width-px-250 f-b f-i text-upper-case"
             style={{ lineHeight: "64px" }}
           >
             Make Your Dreams Come True!

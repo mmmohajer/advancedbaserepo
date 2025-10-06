@@ -1,31 +1,34 @@
 import cx from "classnames";
 
 import Div from "@/baseComponents/reusableComponents/Div";
-import Heading from "@/baseComponents/reusableComponents/Heading";
+import AnimateContainerOnScroll from "@/baseComponents/reusableComponents/AnimateContainerOnScroll";
+
+import styles from "./SectionContainer.module.scss";
 
 const SectionContainer = ({
-  title,
+  hasHorizontalPadding = true,
+  hasVerticalPadding = true,
+  hasAnimation = false,
   children,
-  isFullwidth = false,
-  hasPadding = true,
-  hasMargin = true,
+  className,
 }) => {
   return (
     <>
-      <Div
-        className={cx(
-          !isFullwidth ? "global-container" : "width-per-100",
-          hasPadding ? "p-x-32" : "",
-          hasMargin ? "m-b-32" : ""
-        )}
+      <AnimateContainerOnScroll
+        className={cx(hasAnimation && styles.anim)}
+        activeClassName={cx(hasAnimation && styles.animIsActive)}
       >
-        {title?.length ? (
-          <Div className="f-b m-y-32">
-            <Heading type={3}>{title}</Heading>
-          </Div>
-        ) : null}
-        <Div className="width-per-100">{children}</Div>
-      </Div>
+        <Div
+          className={cx(
+            "width-per-100 global-container",
+            hasHorizontalPadding ? "p-x-temp-10" : "",
+            hasVerticalPadding ? "p-y-temp-15" : "",
+            className
+          )}
+        >
+          {children}
+        </Div>
+      </AnimateContainerOnScroll>
     </>
   );
 };

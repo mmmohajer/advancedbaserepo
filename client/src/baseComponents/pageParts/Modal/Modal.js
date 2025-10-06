@@ -8,6 +8,8 @@ import { COLORS } from "@/constants/vars";
 import { clearModal } from "@/reducer/subs/modal";
 
 import PromptMessage from "./subs/PromptMessage";
+import TestimonialVideo from "./subs/TestimonialVideo";
+import BookAMeeting from "./subs/BookAMeeting";
 import styles from "./Modal.module.scss";
 
 const Modal = () => {
@@ -21,15 +23,17 @@ const Modal = () => {
             type="flex"
             hAlign="center"
             vAlign="center"
-            className="pos-abs bg-theme-five width-px-30 height-px-30 br-rad-per-50 mouse-hand"
+            className="pos-abs bg-black width-px-30 height-px-30 br-rad-per-50 mouse-hand"
             style={{ top: "5px", right: "10px" }}
             onClick={() => dispatch(clearModal())}
           >
-            <Icon type="close" color={COLORS["theme-one"]} />
+            <Icon type="close" color={"black"} />
           </Div>
         </Div>
         <Div className="p-x-temp-8">
           {type === "prompt-message" ? <PromptMessage /> : ""}
+          {type === "testimonial-video" ? <TestimonialVideo /> : ""}
+          {type === "book-a-meeting" ? <BookAMeeting /> : ""}
         </Div>
       </Div>
     </>

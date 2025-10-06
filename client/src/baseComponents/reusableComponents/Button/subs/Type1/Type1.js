@@ -6,10 +6,7 @@ const Type1 = ({ btnText, className, ...props }) => {
     <>
       <button
         className={cx(
-          "p-y-8 p-x-16 br-rad-px-50 mouse-hand",
-          props?.disabled
-            ? "bg-silver text-gray opacity-60"
-            : "bg-theme-one br-all-solid-2 br-green bg-blue-on-hover text-black text-white-on-hover br-blue-on-hover",
+          "p-y-8 p-x-16 br-rad-px-50 mouse-hand bg-black br-all-solid-2 br-color-black bg-black-on-hover text-blue text-white-on-hover br-color-five-on-hover",
           className
         )}
         {...props}

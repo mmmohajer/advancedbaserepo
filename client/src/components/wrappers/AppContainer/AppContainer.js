@@ -13,7 +13,7 @@ import BaseAppWrapper from "@/components/wrappers/BaseAppWrapper";
 
 import useDivWidth from "@/hooks/useDivWidth";
 import { hideMobNav } from "@/reducer/subs/isMobNavVisible";
-import { setActiveMenu } from "@/reducer/subs/activeMenu";
+import { setActiveDashboardItem } from "@/reducer/subs/activeDashboardItem";
 
 const AppContainer = ({
   pageIdentifier,
@@ -36,7 +36,7 @@ const AppContainer = ({
 
   useEffect(() => {
     if (pageIdentifier) {
-      dispatch(setActiveMenu(pageIdentifier));
+      dispatch(setActiveDashboardItem(pageIdentifier));
     }
   }, [pageIdentifier]);
 
@@ -46,7 +46,7 @@ const AppContainer = ({
         {isLoading ? <Loading /> : ""}
         {modalType ? <Modal /> : ""}
         {alert?.length ? <Alert /> : ""}
-        <Div className="width-per-100 bg-theme-one min-height-vh-full">
+        <Div className="width-per-100 bg-black min-height-vh-full">
           <Div
             ref={containerRef}
             className={cx(
@@ -72,7 +72,7 @@ const AppContainer = ({
                   direction="vertical"
                   className={cx(
                     "flex--gr--1 of-y-auto",
-                    hasSideBarDashboard ? "m-b-16" : ""
+                    hasSideBarDashboard ? "" : ""
                   )}
                 >
                   {hasHeader && <AppHeader />}

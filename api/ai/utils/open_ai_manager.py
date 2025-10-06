@@ -8,7 +8,7 @@ from core.models import UserModel, ProfileModel
 from ai.utils.ai_manager import BaseAIManager
 
 class OpenAIManager(BaseAIManager):
-    def __init__(self, model, api_key, cur_users=[]):
+    def __init__(self, model, api_key, cur_users=[], max_chars_per_message=4000, max_total_chars_for_messages=16000):
         """
         Initialize the OpenAIManager.
         
@@ -57,8 +57,23 @@ class OpenAIManager(BaseAIManager):
         }
         self.OPEN_AI_CLIENT = openai.OpenAI(api_key=api_key)
         self.model = model
+        self.max_chars_per_message = max_chars_per_message
+        self.max_total_chars_for_messages = max_total_chars_for_messages
     
-    def add_message(self, role, text=None, img_url=None, max_history=5):
+    def _get_len_of_non_system_msgs(self):
+        old_non_system_msgs = [msg for msg in self.messages if msg["role"] != "system"]
+        total_chars = 0
+        for msg in old_non_system_msgs:
+            msg_content = msg.get("content", "")
+            if isinstance(msg_content, str):
+                total_chars += len(msg_content)
+            elif isinstance(msg_content, list):
+                for item in msg_content:
+                    if item.get("type") == "text":
+                        total_chars += len(item.get("text", ""))
+        return total_chars
+    
+    def add_message(self, role, text=None, img_url=None):
         """
         Add a message to the conversation history. Supports multimodal (text + image) messages.
         
@@ -66,7 +81,6 @@ class OpenAIManager(BaseAIManager):
             role (str): One of 'system', 'user', 'assistant'.
             text (str): The text content.
             img_url (str): The image URL (optional).
-            max_history (int): Maximum number of messages to keep in history. Default is 5.
         
         Returns:
             None
@@ -77,38 +91,63 @@ class OpenAIManager(BaseAIManager):
         """
         if role not in ["system", "user", "assistant"]:
             return
+        
+        if text is None and img_url is None:
+            return
+        
         content = []
-        if text is not None:
-            content.append({"type": "text", "text": text})
-        if img_url is not None:
-            content.append({"type": "image_url", "image_url": {"url": img_url}})
         if role == "system":
-            sys_text = text if text is not None else ""
-            if self.messages and self.messages[0]["role"] == "system":
-                self.messages[0]["content"] += f"\n{sys_text}"
-            else:
-                self.messages.insert(0, {"role": "system", "content": sys_text})
+            if text:
+                content.append({"type": "text", "text": text})
+            if img_url:
+                content.append({"type": "image_url", "image_url": {"url": img_url}})
+            
+            for i, msg in enumerate(self.messages):
+                if msg["role"] != "system":
+                    break
+            try:
+                self.messages.insert(i, {"role": "system", "content": content})
+            except Exception as e:
+                self.messages.insert(0, {"role": "system", "content": content})
+        
         else:
-            msg_content = content if content else text
-            self.messages.append({"role": role, "content": msg_content})
-            if len(self.messages) > max_history + 2:
-                old_msgs = self.messages[1:-max_history] if self.messages and self.messages[0]["role"] == "system" else self.messages[:-max_history]
-                if old_msgs:
-                    summary_lines = []
-                    for msg in old_msgs:
-                        if msg["role"] == "user":
-                            summary_lines.append(f"User said: {msg['content']}")
-                        elif msg["role"] == "assistant":
-                            summary_lines.append(f"Assistant said: {msg['content']}")
-                    summary_text = "\n".join(summary_lines)
-                    summarized = self.summarize(summary_text)
-                    if self.messages and self.messages[0]["role"] == "system":
-                        self.messages[0]["content"] += f"\n{summarized}"
-                        self.messages = [self.messages[0]] + self.messages[-max_history:]
-                    else:
-                        self.messages = [{"role": "system", "content": summarized}] + self.messages[-max_history:]
+            total_char_of_old_non_sys_msgs = self._get_len_of_non_system_msgs()
+            if total_char_of_old_non_sys_msgs + (len(text) if text else 0) > self.max_total_chars_for_messages:
+                old_non_system_msgs = [msg for msg in self.messages if msg["role"] != "system"]
+                old_system_msgs = [msg for msg in self.messages if msg["role"] == "system"]
+                accum_txt = ""
+                for msg in old_non_system_msgs:
+                    msg_content = msg.get("content", "")
+                    if isinstance(msg_content, str):
+                        accum_txt += msg_content
+                    elif isinstance(msg_content, list):
+                        for item in msg_content:
+                            if item.get("type") == "text":
+                                accum_txt += item.get("text", "")
+                if accum_txt:
+                    original_old_sys_messages = []
+                    summary_sys_msg = ""
+                    for msg in old_system_msgs:
+                        msg_content = msg.get("content", "")
+                        if isinstance(msg_content, dict) and msg_content.get("type") == "text":
+                            if "Previous conversation summary:" in msg_content.get("text", ""):
+                                summary_sys_msg = msg_content.get("text", "")
+                            else:
+                                original_old_sys_messages.append(msg)
+                        else:
+                            original_old_sys_messages.append(msg)
+                    summary = self.summarize(f"{summary_sys_msg}\n {accum_txt}", max_length=self.max_total_chars_for_messages // 4)
+                    self.messages = original_old_sys_messages
+                    self.messages.append({"role": "system", "content": {"type": "text", "text": f"**Previous conversation summary:** {summary}"}})
+            if text:
+                if len(text) > self.max_chars_per_message:
+                    text = self.summarize(text, max_length=self.max_chars_per_message)
+                content.append({"type": "text", "text": text})
+            if img_url:
+                content.append({"type": "image_url", "image_url": {"url": img_url}})
+            self.messages.append({"role": role, "content": content})
 
-    def generate_response(self, max_token=2000, messages=None):
+    def generate_response(self, max_token=2000, messages=None, clear_messages=True):
         """
         Generate a response from the OpenAI chat model.
         
@@ -140,7 +179,8 @@ class OpenAIManager(BaseAIManager):
         self._apply_cost(cost=cost, service="OPEN_AI_COMPLETION")
 
         raw_response = response.choices[0].message.content.strip() if response.choices and response.choices[0].message else ""
-        self.clear_messages()
+        if clear_messages:
+            self.clear_messages()
         return self._clean_code_block(raw_response)
 
     

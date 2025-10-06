@@ -35,7 +35,7 @@ const AuthWithGoogle = ({ code }) => {
     sendReq: authenticateUser,
     setSendReq: setAuthenticateUser,
     handleError: () => {
-      router.push(PAGE_ROUTES.LOGIN);
+      router.push(PAGE_ROUTES.APP.LOGIN);
     },
   });
   useEffect(() => {
@@ -48,7 +48,7 @@ const AuthWithGoogle = ({ code }) => {
       setGoogleAccessToken(data.access_token);
       setIdToken(data.id_token);
     } else if (data?.error) {
-      router.push(PAGE_ROUTES.LOGIN);
+      router.push(PAGE_ROUTES.APP.LOGIN);
     }
   }, [data]);
   // ----------------------------------------------------------------
@@ -67,7 +67,7 @@ const AuthWithGoogle = ({ code }) => {
     sendReq: loginUser,
     setSendReq: setLoginUser,
     handleError: () => {
-      router.push(PAGE_ROUTES.LOGIN);
+      router.push(PAGE_ROUTES.APP.LOGIN);
     },
   });
   useEffect(() => {
@@ -83,7 +83,7 @@ const AuthWithGoogle = ({ code }) => {
         dispatch(setAccessToken(loginData.access_token));
       }
       if (loginData?.user && loginData?.user?.is_active) {
-        router.push(PAGE_ROUTES.DASHBOARD);
+        router.push(PAGE_ROUTES.APP.DASHBOARD);
       }
     }
   }, [loginData]);

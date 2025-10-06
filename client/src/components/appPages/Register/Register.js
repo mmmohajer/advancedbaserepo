@@ -151,19 +151,13 @@ const Register = () => {
         </Form>
 
         <Div distributedBetween type="flex" className="m-b-16" vAlign="center">
-          <Div
-            className="width-per-45 bg-theme-two"
-            style={{ height: "2px" }}
-          />
+          <Div className="width-per-45 bg-black" style={{ height: "2px" }} />
           <Div className="f-s-px-12">OR</Div>
-          <Div
-            className="width-per-45 bg-theme-two"
-            style={{ height: "2px" }}
-          />
+          <Div className="width-per-45 bg-black" style={{ height: "2px" }} />
         </Div>
         <GoogleAuth />
         <Div type="flex" className="">
-          <Anchor to={PAGE_ROUTES.LOGIN} anchorType="no-effect" internal>
+          <Anchor to={PAGE_ROUTES.APP.LOGIN} anchorType="no-effect" internal>
             <Div className="text-underline m-t-16 text-center">
               Already have an account? Sign in to your account!
             </Div>

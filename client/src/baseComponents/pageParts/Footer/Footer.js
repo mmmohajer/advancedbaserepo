@@ -1,6 +1,10 @@
+import Div from "@/baseComponents/reusableComponents/Div";
+
 const Footer = () => {
   return (
-    <footer className="width-per-100 min-heigh-px-100 bg-blue">Footer</footer>
+    <>
+      <Div>Footer</Div>
+    </>
   );
 };
 

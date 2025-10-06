@@ -1,9 +1,11 @@
+from django.core.cache import cache
 import base64
 from pydoc import text
 from django.conf import settings
 import json
 import os
 from google.cloud import texttospeech, speech
+from time import sleep
 
 from core.models import UserModel
 from ai.utils.open_ai_manager import OpenAIManager
@@ -75,6 +77,22 @@ def test_ai_stt():
         audio_bytes = file.read()
     text = manager.stt(audio_input=audio_bytes, input_type="bytes")
     print(f"Transcribed Text: {text}")
+
+def test_open_ai_add_message():
+    manager = OpenAIManager(model="gpt-4o", api_key=settings.OPEN_AI_SECRET_KEY, max_chars_per_message=300, max_total_chars_for_messages=300)
+    manager.add_message("system", text="Focus on creating original, witty jokes that are appropriate for all audiences.")
+    manager.add_message("system", text="You are a helpful and friendly AI assistant that loves to tell jokes.")    
+    manager.add_message("user", text="Hello there! How are you doing today?")
+    manager.add_message("assistant", text="Hello! I'm doing great, thank you for asking. How can I help you?")
+    manager.add_message("user", text="I'm having a tough day. Could you tell me a good joke to cheer me up?")
+    manager.add_message("assistant", text="Of course! Here's one: Why don't scientists trust atoms? Because they make up everything!")
+    manager.add_message("user", text="Haha, that's pretty good! Do you have any programming jokes?")
+    manager.add_message("assistant", text="Absolutely! Why do programmers prefer dark mode? Because light attracts bugs!")
+    manager.add_message("user", text="Oh that's clever! I love programming humor. Got any more?")
+    manager.add_message("assistant", text="Sure! How many programmers does it take to change a light bulb? None, that's a hardware problem!")
+    manager.add_message("user", text="These are great! You're really brightening my day. Any jokes about AI?")
+    manager.add_message("assistant", text="Here's one: Why did the AI go to therapy? It had too many neural network issues!")
+    print(manager.get_messages())
 
 def test_google_add_message():
     manager = GoogleAIManager(api_key=settings.GOOGLE_API_KEY)
@@ -482,9 +500,9 @@ def test_advanced_teaching_content():
 
 def test_aws_tts():
     aws_manager = AwsManager(
-        access_key_id=settings.AWS_ACCESS_KEY_ID,
-        secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        region_name=settings.AWS_DEFAULT_REGION
+        access_key_id=settings.AWS_REAL_ACCESS_KEY_ID,
+        secret_access_key=settings.AWS_REAL_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_REAL_DEFAULT_REGION
     )
     text = """
         <speak>
@@ -564,4 +582,4 @@ def test_azure_tts():
 
 
 def test_ai_manager():
-   test_summarizer()
+   test_open_ai_add_message()

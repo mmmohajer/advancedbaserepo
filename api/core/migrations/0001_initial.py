@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('title', models.CharField(max_length=248, unique=True)),
-                ('file', models.FileField(storage=core.models.base_model.MediaFileS3Storage(bucket_name='media', is_public=True), upload_to=core.utils.helpers.get_media_upload_path)),
+                ('file', models.FileField(storage=core.models.base_model.MediaFileS3Storage(is_public=True), upload_to=core.utils.helpers.get_media_upload_path)),
                 ('file_type', models.CharField(choices=[('IMAGE', 'IMAGE'), ('VIDEO', 'VIDEO'), ('PDF', 'PDF'), ('CSV', 'CSV'), ('OTHER', 'OTHER')], max_length=256)),
                 ('post_type', models.CharField(choices=[('BLOG', 'BLOG'), ('TIP', 'TIP'), ('PROJECT', 'PROJECT'), ('TESTIMONIAL', 'TESTIMONIAL'), ('GENERAL', 'GENERAL')], max_length=256)),
             ],

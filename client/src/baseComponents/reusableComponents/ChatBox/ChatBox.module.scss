@@ -1,3 +1,5 @@
+@use "@/styles/branding/base/helpers" as *;
+
 .microphoneContainer {
   position: relative;
   width: 48px;
@@ -28,9 +30,9 @@
 .botMessageContainer {
   line-height: 2rem;
 
-  p {
-    margin-bottom: 2rem;
-  }
+  // p {
+  //   margin-bottom: 2rem;
+  // }
 
   h1 {
     font-size: 22px;

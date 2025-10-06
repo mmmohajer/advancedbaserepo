@@ -23,7 +23,7 @@ const ConnectionToSocket = ({
     url: `${wsUrl}?token=${accessToken}`,
     onMessage: (event) => {
       const data = JSON.parse(event.data);
-      setWsData((prev) => ({ ...prev, ...data }));
+      setWsData({ ...data });
     },
   });
   useEffect(() => {

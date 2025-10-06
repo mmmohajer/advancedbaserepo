@@ -5,7 +5,7 @@ export const disabledClass = () =>
 
 export const typeClass = (btnType) => {
   if (btnType === 1) {
-    return "bg-theme-one br-all-solid-2 br-color-theme-five bg-theme-five-on-hover text-theme-five text-white-on-hover br-color-five-on-hover";
+    return "bg-black br-all-solid-2 br-color-black bg-black-on-hover text-blue text-white-on-hover br-color-five-on-hover";
   }
   return "";
 };

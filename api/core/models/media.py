@@ -12,16 +12,12 @@ FILE_TYPES = [
 ]
 
 POST_TYPES = [
-    ('BLOG', 'BLOG'),
-    ('TIP', 'TIP'),
-    ('PROJECT', 'PROJECT'),
-    ('TESTIMONIAL', 'TESTIMONIAL'),
-    ('GENERAL', 'GENERAL')
+    ('MEDIA', 'MEDIA')
 ]
 
 class Media(TimeStampedModel):
     title = models.CharField(max_length=248, unique=True)
-    file = models.FileField(storage=MediaFileS3Storage(is_public=True, bucket_name="media"), upload_to=get_media_upload_path)
+    file = models.FileField(storage=MediaFileS3Storage(is_public=True), upload_to=get_media_upload_path)
     file_type = models.CharField(
         max_length=256, choices=FILE_TYPES)
     post_type = models.CharField(

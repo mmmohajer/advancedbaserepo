@@ -32,14 +32,14 @@ const BaseAppWrapper = ({ isAuthPage = false, children }) => {
         const token = getLocalStorage("refresh_token");
         refreshTokenRef.current = token;
         if (isAuthPage) {
-          router.push(PAGE_ROUTES.DASHBOARD);
+          router.push(PAGE_ROUTES.APP.DASHBOARD);
         }
       } else {
         removeLocalStorage("access_token");
         dispatch(clearAccessToken());
         removeLocalStorage("refresh_token");
         if (!isAuthPage) {
-          router.push(PAGE_ROUTES.LOGIN);
+          router.push(PAGE_ROUTES.APP.LOGIN);
         }
         setShowAuthPage(true);
       }
@@ -61,7 +61,7 @@ const BaseAppWrapper = ({ isAuthPage = false, children }) => {
       removeLocalStorage("access_token");
       removeLocalStorage("refresh_token");
       if (!isAuthPage) {
-        router.push(PAGE_ROUTES.LOGIN);
+        router.push(PAGE_ROUTES.APP.LOGIN);
       }
     },
   });
@@ -94,7 +94,7 @@ const BaseAppWrapper = ({ isAuthPage = false, children }) => {
       removeLocalStorage("access_token");
       removeLocalStorage("refresh_token");
       if (!isAuthPage) {
-        router.push(PAGE_ROUTES.LOGIN);
+        router.push(PAGE_ROUTES.APP.LOGIN);
       }
     },
   });

@@ -28,7 +28,7 @@ const ActivateUser = ({ token, redirectUrl }) => {
     sendReq: activateUser,
     setSendReq: setActivateUser,
     handleError: () => {
-      router.push(PAGE_ROUTES.LOGIN);
+      router.push(PAGE_ROUTES.APP.LOGIN);
     },
   });
   useEffect(() => {
@@ -44,7 +44,7 @@ const ActivateUser = ({ token, redirectUrl }) => {
         dispatch(setAccessToken(data.access_token));
       }
       if (data?.user && data?.user?.is_active) {
-        let localRedirectUrl = redirectUrl || PAGE_ROUTES.DASHBOARD;
+        let localRedirectUrl = redirectUrl || PAGE_ROUTES.APP.DASHBOARD;
         router.push(localRedirectUrl);
       }
     }

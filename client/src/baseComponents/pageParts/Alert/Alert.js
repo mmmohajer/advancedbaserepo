@@ -36,7 +36,7 @@ const Alert = () => {
               }}
               bgColor={
                 item?.type === "success"
-                  ? COLORS["theme-six"]
+                  ? "green"
                   : item?.type === "error"
                   ? "red"
                   : "gray"

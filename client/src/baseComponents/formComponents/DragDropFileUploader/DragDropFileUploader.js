@@ -65,7 +65,7 @@ const DragDropFileUploader = ({
           )}
           whileDraggingElementClassName={cx(
             type === 1 &&
-              "pos-abs pos-abs--lt width-per-100 br-all-solid-2 br-theme-two br-rad-px-10  height-px-200 "
+              "pos-abs pos-abs--lt width-per-100 br-all-solid-2 br-black br-rad-px-10  height-px-200 "
           )}
           inputId={inputId}
           inputName={inputName}

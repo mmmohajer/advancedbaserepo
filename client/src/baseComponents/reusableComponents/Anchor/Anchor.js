@@ -25,7 +25,7 @@ const Anchor = ({
             "mouse-hand",
             anchorType === "scale" && styles.scale,
             anchorType === "internal-routing" &&
-              "text-theme-two text-theme-three-on-hover",
+              "text-black text-black-on-hover",
             anchorType === "no-effect" && "",
             className
           )}

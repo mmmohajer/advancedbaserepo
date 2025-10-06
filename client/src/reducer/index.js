@@ -11,6 +11,7 @@ import profile from "./subs/profile";
 import sideBarDashboardIsActive from "./subs/sideBarDashboardIsActive";
 import scrollPos from "./subs/scrollPos";
 import accessToken from "./subs/accessToken";
+import activeDashboardItem from "./subs/activeDashboardItem";
 
 const reducer = combineReducers({
   activeMenu,
@@ -24,6 +25,7 @@ const reducer = combineReducers({
   sideBarDashboardIsActive,
   scrollPos,
   accessToken,
+  activeDashboardItem,
 });
 
 export default reducer;

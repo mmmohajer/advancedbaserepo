@@ -41,7 +41,7 @@ const ForgotPassword = () => {
         "success",
         "You will receive an email with instructions to reset your password."
       );
-      router.push(PAGE_ROUTES.LOGIN);
+      router.push(PAGE_ROUTES.APP.LOGIN);
     }
   }, [data]);
   // ----------------------------------------------------------------

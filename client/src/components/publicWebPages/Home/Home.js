@@ -3,7 +3,7 @@ import Div from "@/baseComponents/reusableComponents/Div";
 const Home = () => {
   return (
     <>
-      <Div className="flex--gr--1 bg-green">Home Page</Div>
+      <Div className="width-per-100 bg-red flex--grow--1">Home</Div>
     </>
   );
 };

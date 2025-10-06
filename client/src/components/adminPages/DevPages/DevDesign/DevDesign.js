@@ -30,17 +30,15 @@ const DevDesign = () => {
   const [chosenItem, setChosenItem] = useState("");
   return (
     <>
-      <Div className={cx("min-height-vh-full bg-theme-three")}>
+      <Div className={cx("min-height-vh-full bg-black")}>
         {showMenu ? (
-          <Div className="width-px-200 min-height-vh-full of-y-auto bg-theme-one scroll-type-one">
+          <Div className="width-px-200 min-height-vh-full of-y-auto bg-black scroll-type-one">
             {DESIGN_ITEMS?.map((item, idx) => (
               <Div
                 key={idx}
                 className={cx(
                   "p-y-8 p-x-16 text-center m-b-8 text-black mouse-hand",
-                  chosenItem === item?.identifier
-                    ? "bg-theme-two"
-                    : "bg-theme-three"
+                  chosenItem === item?.identifier ? "bg-black" : "bg-black"
                 )}
                 onClick={() => {
                   setShowMenu(false);

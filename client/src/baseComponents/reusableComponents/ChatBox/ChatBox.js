@@ -6,6 +6,8 @@ import Icon from "@/baseComponents/reusableComponents/Icon";
 import AreaText from "@/baseComponents/formComponents/AreaText";
 import VoiceRecorder from "@/baseComponents/reusableComponents/VoiceRecorder";
 
+import { COLORS } from "@/constants/vars";
+
 import ChatLoader from "./subs/ChatLoader";
 import styles from "./ChatBox.module.scss";
 
@@ -21,6 +23,7 @@ const ChatBox = ({
   mainContainerClassName,
   mainContainerStyle = {},
   onMessageSentClick,
+  chunkDurationInSecond = 60,
   children,
 }) => {
   const messagesContainerRef = useRef(null);
@@ -28,6 +31,7 @@ const ChatBox = ({
   const safetyRef = useRef();
 
   const [recording, setRecording] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState("");
 
   useEffect(() => {
     setIsRecording(recording);
@@ -89,7 +93,7 @@ const ChatBox = ({
       <Div
         type="flex"
         direction="vertical"
-        className="flex--grow--1 of-hidden br-all-solid-2 br-rad-px-10 br--black width-per-100"
+        className="flex--grow--1 of-hidden br-all-solid-2 br-rad-px-10 br-black width-per-100"
       >
         <Div
           className={cx(
@@ -114,6 +118,14 @@ const ChatBox = ({
                 value={userChatMessage}
                 onChange={(e) => setUserChatMessage(e.target.value)}
                 disabled={recording}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    if (onMessageSentClick) {
+                      onMessageSentClick();
+                    }
+                  }
+                }}
               />
             </Div>
             <Div>
@@ -122,7 +134,7 @@ const ChatBox = ({
                 onComplete={handleAudioComplete}
                 recording={recording}
                 setRecording={setRecording}
-                chunkDurationInSecond={60}
+                chunkDurationInSecond={chunkDurationInSecond}
               />
             </Div>
             <Div type="flex" vAlign="center">
@@ -130,7 +142,9 @@ const ChatBox = ({
                 type="flex"
                 hAlign="center"
                 vAlign="center"
-                className={cx("width-px-50 height-px-50")}
+                className={cx("width-px-50 height-px-50 mouse-hand")}
+                onMouseEnter={() => setHoveredItem("send_message")}
+                onMouseLeave={() => setHoveredItem("")}
                 onClick={() => {
                   if (onMessageSentClick) {
                     onMessageSentClick();
@@ -142,7 +156,7 @@ const ChatBox = ({
                 <Icon
                   type={"paper-plane"}
                   scale={2}
-                  color={recording ? "gray" : "black"}
+                  color={hoveredItem === "send_message" ? "blue" : "black"}
                 />
               </Div>
               <Div
@@ -150,8 +164,10 @@ const ChatBox = ({
                 hAlign="center"
                 vAlign="center"
                 onClick={() => setRecording(!recording)}
+                onMouseEnter={() => setHoveredItem("microphone")}
+                onMouseLeave={() => setHoveredItem("")}
                 className={cx(
-                  "width-px-50 height-px-50",
+                  "width-px-50 height-px-50 mouse-hand",
                   styles.microphoneContainer,
                   { [styles.recording]: recording }
                 )}
@@ -159,7 +175,7 @@ const ChatBox = ({
                 <Icon
                   type={recording ? "stop-circle" : "microphone"}
                   scale={2}
-                  color="black"
+                  color={hoveredItem === "microphone" ? "blue" : "black"}
                 />
               </Div>
             </Div>

@@ -23,21 +23,21 @@ def connect_to_storage():
     return client
 
 
-def upload_file_to_cloud(file, storage_space_name="images", file_key="nested/test_img.svg", file_type="private", is_from_client=False):
+def upload_file_to_cloud(file, file_key="nested/test_img.svg", file_type="private", is_from_client=False):
     """file_type can be public-read or private"""
     try:
         client = connect_to_storage()
         if is_from_client:
             client.upload_fileobj(
                 Fileobj=file,
-                Bucket=storage_space_name,
+                Bucket=settings.STORAGE_BUCKET_NAME,
                 Key=file_key,
                 ExtraArgs={'ACL': file_type}
             )
         else:
             client.upload_file(
                 Filename=file,
-                Bucket=storage_space_name,
+                Bucket=settings.STORAGE_BUCKET_NAME,
                 Key=file_key,
                 ExtraArgs={'ACL': file_type}
             )
@@ -47,12 +47,12 @@ def upload_file_to_cloud(file, storage_space_name="images", file_key="nested/tes
         return False
 
 
-def get_signed_url_of_file_from_cloud(storage_space_name="images", file_key="nested/test_img.svg"):
+def get_signed_url_of_file_from_cloud(file_key="nested/test_img.svg"):
     try:
         client = connect_to_storage()
         signed_url = client.generate_presigned_url(
             'get_object',
-            Params={'Bucket': storage_space_name, 'Key': file_key},
+            Params={'Bucket': settings.STORAGE_BUCKET_NAME, 'Key': file_key},
             ExpiresIn=3600
         )
         return signed_url
@@ -61,24 +61,24 @@ def get_signed_url_of_file_from_cloud(storage_space_name="images", file_key="nes
         return ""
 
 
-def get_url_from_cloud(storage_space_name="images", file_key="nested/test_img.svg", file_type="private"):
+def get_url_from_cloud(file_key="nested/test_img.svg", file_type="private"):
     try:
         if file_type == "private":
-            return get_signed_url_of_file_from_cloud(storage_space_name, file_key)
+            return get_signed_url_of_file_from_cloud(file_key)
         elif file_type == "public-read":
             return f"{settings.STORAGE_END_POINT_CDN_URL}/{file_key}"
         else:
-            return get_signed_url_of_file_from_cloud(storage_space_name, file_key)
+            return get_signed_url_of_file_from_cloud(file_key)
     except Exception as e:
         print(e)
         return ""
 
 
-def delete_file_from_cloud(storage_space_name="images", file_key="nested/test_img.svg"):
+def delete_file_from_cloud(file_key="nested/test_img.svg"):
     try:
         client = connect_to_storage()
         client.delete_object(
-            Bucket=storage_space_name,
+            Bucket=settings.STORAGE_BUCKET_NAME,
             Key=file_key
         )
         print(f"File '{file_key}' deleted successfully.")

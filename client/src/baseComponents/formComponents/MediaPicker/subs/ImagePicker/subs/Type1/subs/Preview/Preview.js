@@ -28,7 +28,7 @@ const Preview = ({
           )}
         >
           <Close
-            barColor={COLORS["theme-two"]}
+            barColor={"black"}
             barHeight="25px"
             iconScale={0.8}
             iconCircleSize="15px"

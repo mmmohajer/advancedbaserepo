@@ -42,7 +42,7 @@ const LogOut = ({ children, ...props }) => {
       dispatch(clearAccessToken());
       removeLocalStorage("refresh_token");
       dispatch(setProfile({}));
-      router.push(PAGE_ROUTES.LOGIN);
+      router.push(PAGE_ROUTES.APP.LOGIN);
     },
   });
   useEffect(() => {
@@ -51,7 +51,7 @@ const LogOut = ({ children, ...props }) => {
       dispatch(clearAccessToken());
       removeLocalStorage("refresh_token");
       dispatch(setProfile({}));
-      router.push(PAGE_ROUTES.LOGIN);
+      router.push(PAGE_ROUTES.APP.LOGIN);
     }
   }, [data]);
   // --------------------------------------------------------

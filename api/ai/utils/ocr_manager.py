@@ -10,7 +10,6 @@ from weasyprint import HTML
 
 from ai.utils.doc_ai_managr import DocAIManager
 from ai.utils.chunk_manager import ChunkPipeline
-from ai.tasks import apply_cost_task
 
 class OCRManager:
     def __init__(self, google_cloud_project_id, google_cloud_location, google_cloud_processor_id, cur_users=[]):
@@ -32,6 +31,7 @@ class OCRManager:
         self.cost = 0
 
     def _apply_cost(self, cost, service):
+        from ai.tasks import apply_cost_task
         self.cost += cost
         if self.cur_users:
             user_ids = [user.id for user in self.cur_users]

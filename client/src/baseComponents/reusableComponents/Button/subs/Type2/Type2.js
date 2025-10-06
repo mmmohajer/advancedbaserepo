@@ -17,7 +17,7 @@ const Type2 = ({
           "p-y-8 p-x-16 br-rad-px-50 mouse-hand",
           props?.disabled
             ? "bg-silver text-gray-500 cursor-not-allowed opacity-60"
-            : "bg-theme-one br-all-solid-2 br-color-theme-five bg-theme-five-on-hover text-theme-five text-white-on-hover br-color-five-on-hover",
+            : "bg-black br-all-solid-2 br-color-black bg-black-on-hover text-blue text-white-on-hover br-color-five-on-hover",
           className
         )}
         {...props}

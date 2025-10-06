@@ -26,7 +26,6 @@ class CloudStorageManager:
     def upload_file(
         self,
         file,
-        bucket="images",
         file_key="nested/test_img.svg",
         acl="private",
         is_from_client=False,
@@ -36,14 +35,14 @@ class CloudStorageManager:
             if is_from_client:
                 self.client.upload_fileobj(
                     Fileobj=file,
-                    Bucket=bucket,
+                    Bucket=settings.STORAGE_BUCKET_NAME,
                     Key=file_key,
                     ExtraArgs={'ACL': acl}
                 )
             else:
                 self.client.upload_file(
                     Filename=file,
-                    Bucket=bucket,
+                    Bucket=settings.STORAGE_BUCKET_NAME,
                     Key=file_key,
                     ExtraArgs={'ACL': acl}
                 )
@@ -52,24 +51,24 @@ class CloudStorageManager:
             print(f"Upload error: {e}")
             return False
 
-    def get_url(self, bucket="images", file_key="nested/test_img.svg", acl="private", expires_in=3600):
+    def get_url(self, file_key="nested/test_img.svg", acl="private", expires_in=3600):
         """Get either a signed URL or a public CDN URL based on ACL."""
         try:
             if acl == "private":
-                return self._get_signed_url(bucket, file_key, expires_in)
+                return self._get_signed_url(file_key, expires_in)
             elif acl == "public-read" and self.cdn_url:
                 return f"{self.cdn_url}/{file_key}"
             else:
-                return self._get_signed_url(bucket, file_key, expires_in)
+                return self._get_signed_url(file_key, expires_in)
         except Exception as e:
             print(f"Get URL error: {e}")
             return ""
 
-    def delete_file(self, bucket="images", file_key="nested/test_img.svg"):
+    def delete_file(self, file_key="nested/test_img.svg"):
         """Delete a file from storage."""
         try:
             self.client.delete_object(
-                Bucket=bucket,
+                Bucket=settings.STORAGE_BUCKET_NAME,
                 Key=file_key
             )
             print(f"File '{file_key}' deleted successfully.")
@@ -77,8 +76,8 @@ class CloudStorageManager:
         except Exception as e:
             print(f"Delete error: {e}")
             return False
-    
-    def upload_base64(self, data, bucket="images", file_key="nested/test.wav", acl="private"):
+
+    def upload_base64(self, data, file_key="nested/test.wav", acl="private"):
         try:
             if isinstance(data, (bytes, bytearray)):
                 file_bytes = data
@@ -92,7 +91,7 @@ class CloudStorageManager:
             file_obj = io.BytesIO(file_bytes)
             self.client.upload_fileobj(
                 Fileobj=file_obj,
-                Bucket=bucket,
+                Bucket=settings.STORAGE_BUCKET_NAME,
                 Key=file_key,
                 ExtraArgs={'ACL': acl}
             )
@@ -104,13 +103,13 @@ class CloudStorageManager:
     # ------------------------------------------------------------
     # Private methods
     # ------------------------------------------------------------
-    
-    def _get_signed_url(self, bucket="images", file_key="nested/test_img.svg", expires_in=3600):
+
+    def _get_signed_url(self, file_key="nested/test_img.svg", expires_in=3600):
         """Generate a signed URL for a private object."""
         try:
             return self.client.generate_presigned_url(
                 'get_object',
-                Params={'Bucket': bucket, 'Key': file_key},
+                Params={'Bucket': settings.STORAGE_BUCKET_NAME, 'Key': file_key},
                 ExpiresIn=expires_in
             )
         except Exception as e:

@@ -27,7 +27,7 @@ const Type1 = ({
             <Icon
               type={iconType}
               scale={3}
-              color={COLORS["theme-three"]}
+              color={"black"}
               className="width-px-70 height-px-80 mouse-hand"
               onClick={() => setOpenFileBrowser(true)}
             />

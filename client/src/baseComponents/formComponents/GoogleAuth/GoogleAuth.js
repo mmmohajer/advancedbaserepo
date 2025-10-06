@@ -18,7 +18,7 @@ const GoogleAuth = () => {
           type="flex"
           hAlign="center"
           vAlign="center"
-          className="br-rad-px-5 height-px-50 width-px-300 m-l-auto m-r-auto br-all-solid-2 br-theme-two br-rad-px-25 mouse-hand"
+          className="br-rad-px-5 height-px-50 width-px-300 m-l-auto m-r-auto br-all-solid-2 br-black br-rad-px-25 mouse-hand"
         >
           <SVGIcon type={"google"} />
           <Div className="m-l-8">Sign In With Google</Div>

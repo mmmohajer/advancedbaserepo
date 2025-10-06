@@ -8,12 +8,12 @@ import uuid
 
 from ai.utils.open_ai_manager import OpenAIManager
 class AudioManager:
-    def __init__(self):
+    def __init__(self, cur_users=[]):
         """DOC
         Initializes the AudioManager instance.
         No arguments.
         """
-        self.open_ai_manager = OpenAIManager(model="gpt-4o", api_key=settings.OPEN_AI_SECRET_KEY)
+        self.open_ai_manager = OpenAIManager(model="gpt-4o", api_key=settings.OPEN_AI_SECRET_KEY, cur_users=cur_users)
 
     def preprocess_wav(self, wav_bytes):
         """DOC

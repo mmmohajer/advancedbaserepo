@@ -21,6 +21,15 @@ import {
   faMicrophoneSlash,
   faVideo,
   faVideoSlash,
+  faBlog,
+  faCircleExclamation,
+  faListCheck,
+  faGauge,
+  faRobot,
+  faTableList,
+  faSliders,
+  faFileCode,
+  faFileLines,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faSquareInstagram,
@@ -269,6 +278,87 @@ const Icon = ({
       {type === "video-slash" ? (
         <FontAwesomeIcon
           icon={faVideoSlash}
+          style={{ color, width, height, transform: `scale(${scale})` }}
+        />
+      ) : (
+        ""
+      )}
+
+      {type === "blog" ? (
+        <FontAwesomeIcon
+          icon={faBlog}
+          style={{ color, width, height, transform: `scale(${scale})` }}
+        />
+      ) : (
+        ""
+      )}
+
+      {type === "circle-exclamation" ? (
+        <FontAwesomeIcon
+          icon={faCircleExclamation}
+          style={{ color, width, height, transform: `scale(${scale})` }}
+        />
+      ) : (
+        ""
+      )}
+
+      {type === "list-check" ? (
+        <FontAwesomeIcon
+          icon={faListCheck}
+          style={{ color, width, height, transform: `scale(${scale})` }}
+        />
+      ) : (
+        ""
+      )}
+
+      {type === "gauge" ? (
+        <FontAwesomeIcon
+          icon={faGauge}
+          style={{ color, width, height, transform: `scale(${scale})` }}
+        />
+      ) : (
+        ""
+      )}
+
+      {type === "robot" ? (
+        <FontAwesomeIcon
+          icon={faRobot}
+          style={{ color, width, height, transform: `scale(${scale})` }}
+        />
+      ) : (
+        ""
+      )}
+
+      {type === "table-list" ? (
+        <FontAwesomeIcon
+          icon={faTableList}
+          style={{ color, width, height, transform: `scale(${scale})` }}
+        />
+      ) : (
+        ""
+      )}
+
+      {type === "sliders" ? (
+        <FontAwesomeIcon
+          icon={faSliders}
+          style={{ color, width, height, transform: `scale(${scale})` }}
+        />
+      ) : (
+        ""
+      )}
+
+      {type === "file-code" ? (
+        <FontAwesomeIcon
+          icon={faFileCode}
+          style={{ color, width, height, transform: `scale(${scale})` }}
+        />
+      ) : (
+        ""
+      )}
+
+      {type === "file-lines" ? (
+        <FontAwesomeIcon
+          icon={faFileLines}
           style={{ color, width, height, transform: `scale(${scale})` }}
         />
       ) : (

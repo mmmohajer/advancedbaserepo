@@ -110,10 +110,7 @@ const CarouselType1 = ({
             className="width-px-40 height-px-40 bg-theme-seven br-rad-per-50 m-r-20 mouse-hand"
             onClick={() => setShowPrevItems(true)}
           >
-            <Icon
-              type="left"
-              color={translateX === 0 ? "#333" : COLORS["theme-one"]}
-            />
+            <Icon type="left" color={translateX === 0 ? "#333" : "black"} />
           </Div>
           <Div
             type="flex"
@@ -125,9 +122,7 @@ const CarouselType1 = ({
             <Icon
               type="right"
               color={
-                translateX >= totalWidth - itemsHolderWidth
-                  ? "#333"
-                  : COLORS["theme-one"]
+                translateX >= totalWidth - itemsHolderWidth ? "#333" : "black"
               }
             />
           </Div>

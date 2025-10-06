@@ -44,7 +44,7 @@ const ResetPassword = ({ token, email }) => {
         "success",
         "Password reset successfully, and you can now login with the updated password!"
       );
-      router.push(PAGE_ROUTES.LOGIN);
+      router.push(PAGE_ROUTES.APP.LOGIN);
     }
   }, [data]);
   // ----------------------------------------------------------------

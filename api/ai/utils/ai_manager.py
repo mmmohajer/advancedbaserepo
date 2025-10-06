@@ -2,7 +2,7 @@ import re
 import random
 
 from ai.utils.chunk_manager import ChunkPipeline
-from ai.tasks import apply_cost_task
+
 
 class BaseAIManager:
     """
@@ -17,6 +17,7 @@ class BaseAIManager:
         self.cur_users = cur_users
 
     def _apply_cost(self, cost, service):
+        from ai.tasks import apply_cost_task
         self.cost += cost
         user_ids = []
         if self.cur_users:
@@ -82,6 +83,18 @@ class BaseAIManager:
         """
         self.messages = []
         self.prompt = ""
+    
+    def get_messages(self):
+        """
+        Get the current message history.
+
+        Returns:
+            list: List of message dicts with 'role' and 'content' keys.
+
+        Example:
+            msgs = manager.get_messages()
+        """
+        return self.messages
 
     def build_simple_text_from_html(self, html_src):
         """
@@ -136,7 +149,7 @@ class BaseAIManager:
         """
         raise NotImplementedError("Subclasses must implement generate_response.")
     
-    def summarize(self, text, max_length=1000, max_chunk_size=1000, progress_callback=None):
+    def summarize(self, text, max_length=1000, max_chunk_size=1000, progress_callback=None, clear_messages=False):
         """
         Iteratively summarize a long text by processing it chunk by chunk and accumulating the summary.
         For each chunk, the method combines the previous summary (if any) with the current chunk and asks the AI model to summarize them together.
@@ -172,9 +185,9 @@ class BaseAIManager:
             ]
             prompt = f"Summarize the following text in at most {max_length} tokens:\n\n{input_text}"
             if self.ai_type == "open_ai":
-                response = self.generate_response(max_token=max_length, messages=messages)
+                response = self.generate_response(max_token=max_length, messages=messages, clear_messages=clear_messages)
             elif self.ai_type == "google":
-                response = self.generate_response(max_token=max_length, prompt=prompt)
+                response = self.generate_response(max_token=max_length, prompt=prompt, clear_messages=clear_messages)
             summary = response
         return summary
     

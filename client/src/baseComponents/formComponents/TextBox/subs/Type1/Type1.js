@@ -27,7 +27,7 @@ const Type1 = ({ label, val, placeHolder, isRequired = false, ...props }) => {
           type={curType}
           placeholder={placeHolder}
           className={cx(
-            "p-all-temp-3 br-rad-px-10 br-all-solid-2 m-r-temp-5 br-black width-per-100 bg-white text-theme-five"
+            "p-all-temp-3 br-rad-px-10 br-all-solid-2 m-r-temp-5 br-black width-per-100 bg-white text-black"
           )}
           style={{ outline: "none" }}
         />

@@ -7,7 +7,10 @@ from pdf2image import convert_from_bytes
 import requests
 from PyPDF2 import PdfReader
 from weasyprint import HTML
+import tempfile
+import os
 
+from config.utils.storage_manager import CloudStorageManager
 from ai.utils.doc_ai_managr import DocAIManager
 from ai.utils.chunk_manager import ChunkPipeline
 
@@ -29,13 +32,14 @@ class OCRManager:
         self.GOOGLE_CLOUD_PROCESSOR_ID = google_cloud_processor_id
         self.cur_users = cur_users
         self.cost = 0
+        self.storage_manager = CloudStorageManager()
 
     def _apply_cost(self, cost, service):
         from ai.tasks import apply_cost_task
         self.cost += cost
         if self.cur_users:
             user_ids = [user.id for user in self.cur_users]
-        apply_cost_task.delay(user_ids, cost, service)
+            apply_cost_task.delay(user_ids, cost, service)
 
     def _png_bytes_to_pdf_bytes(self, png_bytes):
         """
@@ -294,220 +298,93 @@ class OCRManager:
         simple_text = chunk_pipeline.process(html_src, "get_text")
         return html_src, simple_text
     
-    def generate_png_pages_from_pdf_bytes(self, pdf_bytes, progress_callback=None, list_of_pages_to_review=None):
+    def get_file_bytes(self, source):
         """
-        Generates PNG images for specified pages of a PDF in both coloured and black & white formats.
-        
+        Converts various file sources to bytes format. Works with any file type.
+
         Args:
-            pdf_bytes (bytes): PDF file data.
-            progress_callback (callable, optional): Function called after each page is processed. 
-                                                   Signature: (page, total, coloured_png_bytes, bw_png_bytes).
-            list_of_pages_to_review (list, optional): List of page numbers to process (1-based). 
-                                                     If None or empty, processes all pages.
+            source (str or bytes): Can be:
+                - URL (http:// or https://)
+                - Local file path
+                - File bytes directly
         
         Returns:
-            dict: Result containing success status and page data
-            {
-                "success": True/False,
-                "message": "Success/error message",
-                "total_pages": int,
-                "pages_to_process": list,
-                "pages": [
-                    {
-                        "page_number": 1,
-                        "coloured_png_bytes": bytes,
-                        "bw_png_bytes": bytes
-                    },
-                    ...
-                ]
-            }
+            bytes or None: File data as bytes, or None if error occurred
         """
         try:
-            total_pages = self.get_pdf_page_count(pdf_bytes)
-            
-            if total_pages == 0:
-                return {
-                    "success": False,
-                    "message": "PDF has no pages",
-                    "total_pages": 0,
-                    "pages_to_process": [],
-                    "pages": []
-                }
-            
-            if list_of_pages_to_review is None or len(list_of_pages_to_review) == 0:
-                pages_to_process = list(range(1, total_pages + 1))
-            else:
-                pages_to_process = []
-                for page_num in list_of_pages_to_review:
-                    if 1 <= page_num <= total_pages:
-                        pages_to_process.append(page_num)
-                    else:
-                        print(f"Warning: Page {page_num} is out of range (1-{total_pages}). Skipping.")
-            
-            if not pages_to_process:
-                return {
-                    "success": False,
-                    "message": "No valid pages to process",
-                    "total_pages": total_pages,
-                    "pages_to_process": [],
-                    "pages": []
-                }
-            
-            pages_to_process.sort()
-            total_pages_to_process = len(pages_to_process)
-            
-            pages_data = []
-            
-            for index, page_number in enumerate(pages_to_process, 1):
-                try:
-                    coloured_png_bytes = self.convert_pdf_page_to_png_bytes(
-                        source=pdf_bytes, 
-                        page_number=page_number
-                    )
-                    
-                    if not coloured_png_bytes:
-                        print(f"Failed to convert page {page_number} to PNG")
-                        continue
-                    
-                    bw_png_bytes = self.make_img_more_readable(coloured_png_bytes)
-                    
-                    page_data = {
-                        "page_number": page_number,
-                        "coloured_png_bytes": coloured_png_bytes,
-                        "bw_png_bytes": bw_png_bytes
-                    }
-                    
-                    pages_data.append(page_data)
-                    
-                    if progress_callback:
-                        progress_callback(
-                            page=page_number, 
-                            total=total_pages_to_process,
-                            coloured_png_bytes=coloured_png_bytes, 
-                            bw_png_bytes=bw_png_bytes
-                        )
-                    else:
-                        print(f"Processed page {page_number} ({index}/{total_pages_to_process})")
-                        
-                except Exception as e:
-                    print(f"Error processing page {page_number}: {e}")
-                    continue
-
-            return {
-                "success": True,
-                "message": f"Successfully processed {len(pages_data)} pages out of {total_pages_to_process} requested (PDF has {total_pages} total pages)",
-                "total_pages": total_pages,
-                "pages_to_process": pages_to_process,
-                "processed_pages": len(pages_data),
-                "pages": pages_data
-            }
-            
-        except Exception as e:
-            return {
-                "success": False,
-                "message": f"Error generating PNG pages from PDF: {str(e)}",
-                "total_pages": 0,
-                "pages_to_process": [],
-                "pages": []
-            }
-
-    def upload_png_pages_from_pdf_bytes_to_storage(self, pdf_bytes, base_file_key, acl="private", expires_in=3600, progress_callback=None, list_of_pages_to_review=None):
-        """
-        Generates PNG images for specified pages of a PDF and uploads them to cloud storage using base64 upload.
-        Uses generate_png_pages_from_pdf_bytes with a callback for uploading.
-        
-        Args:
-            pdf_bytes (bytes): PDF file data.
-            base_file_key (str): Base file key (without page number and extension).
-            acl (str): Access control level.
-            expires_in (int): URL expiration time in seconds.
-            progress_callback (callable, optional): Function called after each page is processed.
-                                               Signature: (page, total, coloured_url, bw_url).
-            list_of_pages_to_review (list, optional): List of page numbers to process (1-based). 
-                                                 If None or empty, processes all pages.
-
-        Returns:
-            dict: Result containing success status and uploaded file URLs
-        """
-        pages_data = []
-        upload_errors = []
-        
-        def upload_callback(page, total, coloured_png_bytes, bw_png_bytes):
-            """Callback function to upload each page as it's generated"""
-            try:
-                coloured_file_key = f"{base_file_key}_page_{page:03d}_coloured.png"
-                bw_file_key = f"{base_file_key}_page_{page:03d}_bw.png"
-                
-                coloured_upload_result = self.storage_manager.upload_base64(
-                    data=coloured_png_bytes,
-                    file_key=coloured_file_key,
-                    acl=acl
-                )
-
-                bw_upload_result = self.storage_manager.upload_base64(
-                    data=bw_png_bytes,
-                    file_key=bw_file_key,
-                    acl=acl
-                )
-                
-                if coloured_upload_result and bw_upload_result:
-                    coloured_url = self.storage_manager.get_url(
-                        file_key=coloured_file_key,
-                        acl=acl,
-                        expires_in=expires_in
-                    )
-
-                    bw_url = self.storage_manager.get_url(
-                        file_key=bw_file_key,
-                        acl=acl,
-                        expires_in=expires_in
-                    )
-                    
-                    page_data = {
-                        "page_number": page,
-                        "coloured_url": coloured_url,
-                        "bw_url": bw_url,
-                        "coloured_file_key": coloured_file_key,
-                        "bw_file_key": bw_file_key
-                    }
-                    
-                    pages_data.append(page_data)
-                    
-                    if progress_callback:
-                        progress_callback(
-                            page=page, 
-                            total=total, 
-                            coloured_url=coloured_url, 
-                            bw_url=bw_url
-                        )
-                    else:
-                        current_index = len(pages_data)
-                        print(f"Uploaded page {page} ({current_index}/{total})")
+            if isinstance(source, bytes):
+                return source
+            elif isinstance(source, str):
+                if source.startswith('http://') or source.startswith('https://'):
+                    response = requests.get(source, timeout=30)
+                    response.raise_for_status()
+                    content_type = response.headers.get('content-type', 'unknown')
+                    print(f"Downloaded file with content-type: {content_type}")
+                    return response.content
                 else:
-                    error_msg = f"Failed to upload page {page}"
-                    upload_errors.append(error_msg)
-                    print(error_msg)
-                    
-            except Exception as e:
-                error_msg = f"Error uploading page {page}: {e}"
-                upload_errors.append(error_msg)
-                print(error_msg)
+                    if not os.path.exists(source):
+                        print(f"File not found: {source}")
+                        return None
+                    with open(source, 'rb') as file:
+                        file_bytes = file.read()
+                    return file_bytes       
+            else:
+                print(f"Unsupported source type: {type(source)}. Expected str (URL/path) or bytes.")
+                return None      
+        except Exception as e:
+            print(f"Unexpected error in get_file_bytes: {e}")
+            return None
+    
+    def process_png_bytes_and_save(self, png_bytes, output_path=None, file_key=None, acl="private"):
+        try:
+            improved_png_bytes = self.make_img_more_readable(png_bytes)
+            if output_path:
+                original_path = f"{output_path}/original.png"
+                improved_path = f"{output_path}/improved.png"
+                with open(original_path, 'wb') as f:
+                    f.write(png_bytes)
+                with open(improved_path, 'wb') as f:
+                    f.write(improved_png_bytes)
+            elif file_key:
+                original_file_key = f"{file_key}/original.png"
+                improved_file_key = f"{file_key}/improved.png"
 
-        result = self.generate_png_pages_from_pdf_bytes(
-            pdf_bytes=pdf_bytes,
-            progress_callback=upload_callback,
-            list_of_pages_to_review=list_of_pages_to_review
-        )
-        
-        if not result["success"]:
-            return result
-        
-        return {
-            "success": True,
-            "message": f"Successfully uploaded {len(pages_data)} pages out of {len(result.get('pages_to_process', []))} requested",
-            "total_pages": result["total_pages"],
-            "pages_to_process": result.get("pages_to_process", []),
-            "processed_pages": result.get("processed_pages", 0),
-            "pages": pages_data,
-            "upload_errors": upload_errors if upload_errors else None
-        }
+                original_base64 = base64.b64encode(png_bytes).decode('utf-8')
+                improved_base64 = base64.b64encode(improved_png_bytes).decode('utf-8')
+            
+                self.storage_manager.upload_base64(
+                    data=original_base64,
+                    file_key=original_file_key,
+                    acl=acl
+                )
+                self.storage_manager.upload_base64(
+                    data=improved_base64,
+                    file_key=improved_file_key,
+                    acl=acl
+                )
+        except Exception as e:
+            pass
+    
+    def generate_png_pages_from_pdf(self, pdf_source, base_file_key, use_page_number_in_file_key=True, list_of_pages_to_review=[], callback=None):
+        if not pdf_source:
+            raise ValueError("pdf_source cannot be empty or None")
+        pdf_bytes = self.get_file_bytes(pdf_source)
+        if not pdf_bytes:
+            raise ValueError("Failed to retrieve PDF bytes from the provided source")
+        number_of_pages = self.get_pdf_page_count(pdf_bytes)
+        page_list = []
+        if list_of_pages_to_review:
+            page_list = [p for p in list_of_pages_to_review if 1 <= p <= number_of_pages]
+        else:
+            page_list = list(range(1, number_of_pages + 1))
+        for idx, page_number in enumerate(page_list):
+            if callback:
+                callback(cur_idx=idx, cur_page=page_number, number_of_pages=len(page_list))
+            png_bytes = self.convert_pdf_page_to_png_bytes(source=pdf_bytes, page_number=page_number)
+            file_key = ""
+            if use_page_number_in_file_key:
+                file_key = f"{base_file_key}/page_{page_number:03d}"
+            else:
+                file_key = base_file_key
+            if file_key:
+                self.process_png_bytes_and_save(png_bytes=png_bytes, file_key=file_key)

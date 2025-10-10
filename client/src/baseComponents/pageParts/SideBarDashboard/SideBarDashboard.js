@@ -32,7 +32,7 @@ const SideBarDashboard = () => {
         type="flex"
         direction="vertical"
         className={cx(
-          "height-vh-full of-y-auto global-transition-one of-x-hidden",
+          "height-vh-full of-y-auto global-transition-one of-x-hidden flex--shrink--0",
           sideBarDashboardIsActive ? "width-px-150" : "width-px-50"
         )}
       >

@@ -28,7 +28,7 @@ const FooterNavigation = () => {
       <Div
         type="flex"
         direction="vertical"
-        className="width-per-100 br-top-solid-2 br-black height-px-80 p-x-16"
+        className="width-per-100 br-top-solid-2 br-black height-px-80 p-x-16 flex--shrink--0"
       >
         <Div
           type="flex"

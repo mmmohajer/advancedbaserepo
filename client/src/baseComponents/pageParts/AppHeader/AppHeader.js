@@ -17,7 +17,7 @@ const AppHeader = () => {
         type="flex"
         distributedBetween
         vAlign="center"
-        className="height-px-85 br-bottom-solid-2 br-black p-r-16"
+        className="height-px-85 br-bottom-solid-2 br-black p-r-16 flex--shrink--0"
       >
         <Div
           type="flex"

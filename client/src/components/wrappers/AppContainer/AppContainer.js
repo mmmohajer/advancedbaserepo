@@ -74,6 +74,8 @@ const AppContainer = ({
               </Div>
             ) : (
               <Div type="flex" direction="vertical" className="height-vh-full">
+                {/* Header is fixed at the top, to allow for scrollable header, remove this and enable the scrollable header */}
+                {hasHeader && <AppHeader />}
                 <Div
                   type="flex"
                   direction="vertical"
@@ -82,7 +84,8 @@ const AppContainer = ({
                     hasSideBarDashboard ? "" : ""
                   )}
                 >
-                  {hasHeader && <AppHeader />}
+                  {/* For scrollable header uncomment this */}
+                  {/* {hasHeader && <AppHeader />}  */}
                   {children}
                 </Div>
                 {hasSideBarDashboard && !isAuthPage ? <FooterNavigation /> : ""}

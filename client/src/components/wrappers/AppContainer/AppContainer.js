@@ -45,24 +45,31 @@ const AppContainer = ({
       <BaseAppWrapper isAuthPage={isAuthPage}>
         {isLoading ? <Loading /> : ""}
         {modalType ? <Modal /> : ""}
-        {alert?.length ? <Alert /> : ""}
-        <Div className="width-per-100 bg-black min-height-vh-full">
+        <Div className="width-per-100 bg-theme-one min-height-vh-full">
           <Div
             ref={containerRef}
             className={cx(
               "width-per-100 global-container bg-white min-height-vh-full"
             )}
           >
+            <Div className="pos-rel">{alert?.length ? <Alert /> : ""}</Div>
             {width >= 800 ? (
               <Div type="flex">
                 {hasSideBarDashboard && !isAuthPage ? <SideBarDashboard /> : ""}
                 <Div
                   type="flex"
                   direction="vertical"
-                  className="flex--gr--1 height-vh-full of-y-auto"
+                  className="height-vh-full width-per-100"
                 >
                   {hasHeader && <AppHeader />}
-                  {children}
+
+                  <Div
+                    type="flex"
+                    direction="vertical"
+                    className="flex--gr--1 of-y-auto"
+                  >
+                    {children}
+                  </Div>
                 </Div>
               </Div>
             ) : (

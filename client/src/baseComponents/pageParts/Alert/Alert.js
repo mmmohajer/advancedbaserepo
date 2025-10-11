@@ -14,7 +14,7 @@ const Alert = () => {
   return (
     <>
       <Div
-        className="pos-fix pos-fix--rt width-per-80 max-width-px-700"
+        className="pos-abs pos-abs--rt width-per-80 max-width-px-700"
         style={{ zIndex: 100000000000000000 }}
       >
         {alert?.map((item, idx) => (

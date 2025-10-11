@@ -9,7 +9,7 @@ class IsAdminOrReadOnly(permissions.BasePermission):
             user_groups_queryset = request.user.groups.all()
             cur_user_groups = [
                 group.name for group in list(user_groups_queryset)]
-            if "Admin" in cur_user_groups:
+            if "ADMIN" in cur_user_groups:
                 return True
         return False
 
@@ -20,6 +20,6 @@ class IsAdminOnly(permissions.BasePermission):
             user_groups_queryset = request.user.groups.all()
             cur_user_groups = [
                 group.name for group in list(user_groups_queryset)]
-            if "Admin" in cur_user_groups:
+            if "ADMIN" in cur_user_groups:
                 return True
         return False

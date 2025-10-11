@@ -8,7 +8,7 @@ const AppSectionContainer = ({ hasPadding = true, children }) => {
       <Div
         type="flex"
         direction="vertical"
-        className={cx("width-per-100 flex--grow--1", {
+        className={cx("width-per-100", {
           "p-all-16": hasPadding,
         })}
       >
